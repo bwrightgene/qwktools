@@ -11,6 +11,13 @@ import {
   Pilcrow,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface MenuItem {
   icon: React.ReactNode;
@@ -26,7 +33,7 @@ const menuItems: MenuItem[] = [
     label: "ID Generator",
     value: "id-generator",
     gradient:
-      "radial-gradient(circle, rgba(15,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
+      "radial-gradient(circle, rgba(15,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%)",
     iconColor: "text-blue-500",
   },
   {
@@ -34,7 +41,7 @@ const menuItems: MenuItem[] = [
     label: "Aspect Ratio",
     value: "aspect-ratio",
     gradient:
-      "radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)",
+      "radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%)",
     iconColor: "text-orange-500",
   },
   {
@@ -42,7 +49,7 @@ const menuItems: MenuItem[] = [
     label: "Image Modifier",
     value: "image-modifier",
     gradient:
-      "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
+      "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%)",
     iconColor: "text-green-500",
   },
   {
@@ -50,7 +57,7 @@ const menuItems: MenuItem[] = [
     label: "List Ordering",
     value: "list-ordering",
     gradient:
-      "radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)",
+      "radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%)",
     iconColor: "text-red-500",
   },
   {
@@ -58,7 +65,7 @@ const menuItems: MenuItem[] = [
     label: "Delimiter",
     value: "delimiter",
     gradient:
-      "radial-gradient(circle, rgba(220,200,10,0.15) 0%, rgba(220,200,10,0.06) 50%, rgba(185,28,28,0) 100%)",
+      "radial-gradient(circle, rgba(220,200,10,0.15) 0%, rgba(220,200,10,0.06) 50%)",
     iconColor: "text-yellow-500",
   },
   {
@@ -66,7 +73,7 @@ const menuItems: MenuItem[] = [
     label: "Lorem Ipsum",
     value: "lorem-ipsum",
     gradient:
-      "radial-gradient(circle, rgba(249,125,189,0.15) 0%, rgba(249,125,189,0.06) 50%, rgba(185,28,28,0) 100%)",
+      "radial-gradient(circle, rgba(249,125,189,0.15) 0%, rgba(249,125,189,0.06) 50%)",
     iconColor: "text-pink-500",
   },
 ];
@@ -117,7 +124,7 @@ export function MenuBar({
   setSelectedTool: (tool: string) => void;
 }) {
   const { theme } = useTheme();
-  const [activeTool, setActiveTool] = useState<string | null>(null);
+  const [activeTool, setActiveTool] = useState<string>("id-generator");
   const isDarkTheme = theme === "dark";
 
   const handleSelectTool = (tool: string) => {
@@ -126,80 +133,93 @@ export function MenuBar({
   };
 
   return (
-    <motion.nav
-      className="p-2 rounded-2xl bg-gradient-to-b from-background/80 to-background/40 backdrop-blur-lg border border-border/40 shadow-lg relative overflow-hidden"
-      initial="initial"
-      whileHover="hover"
-    >
-      <motion.div
-        className={`absolute -inset-2 bg-gradient-radial from-transparent ${
-          isDarkTheme
-            ? "via-blue-400/30 via-30% via-purple-400/30 via-60% via-red-400/30 via-90%"
-            : "via-blue-400/20 via-30% via-purple-400/20 via-60% via-red-400/20 via-90%"
-        } to-transparent rounded-3xl z-0 pointer-events-none`}
-        variants={navGlowVariants}
-      />
-      <ul className="flex items-center gap-2 relative z-10">
-        {menuItems.map((item) => (
-          <motion.li key={item.label} className="relative">
-            <motion.div
-              className="block rounded-xl overflow-visible group relative"
-              style={{ perspective: "600px" }}
-              whileHover="hover"
-              initial="initial"
-            >
+    <div className="w-full">
+      <div className="block sm:hidden w-full px-4">
+        <label className="text-sm font-medium">Select Tool</label>
+        <Select value={activeTool} onValueChange={handleSelectTool}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a tool" />
+          </SelectTrigger>
+          <SelectContent>
+            {menuItems.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <motion.nav
+        className="hidden sm:block p-2 rounded-2xl bg-gradient-to-b from-background/80 to-background/40 backdrop-blur-lg border border-border/40 shadow-lg relative overflow-hidden"
+        initial="initial"
+        whileHover="hover"
+      >
+        <motion.div
+          className={`absolute -inset-2 bg-gradient-radial from-transparent ${
+            isDarkTheme
+              ? "via-blue-400/30 via-30% via-purple-400/30 via-60% via-red-400/30 via-90%"
+              : "via-blue-400/20 via-30% via-purple-400/20 via-60% via-red-400/20 via-90%"
+          } to-transparent rounded-3xl z-0 pointer-events-none`}
+          variants={navGlowVariants}
+        />
+        <ul className="flex items-center gap-2 relative z-10">
+          {menuItems.map((item) => (
+            <motion.li key={item.label} className="relative">
               <motion.div
-                className="absolute inset-0 z-0 pointer-events-none"
-                variants={glowVariants}
-                style={{
-                  background: item.gradient,
-                  opacity: activeTool === item.value ? 1 : 0,
-                  borderRadius: "16px",
-                }}
-              />
-              <motion.button
-                onClick={() => handleSelectTool(item.value)}
-                className={`flex items-center gap-2 px-4 py-2 relative z-10 bg-transparent transition-colors rounded-xl ${
-                  activeTool === item.value
-                    ? "text-foreground font-bold"
-                    : "text-muted-foreground"
-                }`}
-                variants={itemVariants}
-                transition={sharedTransition}
-                style={{
-                  transformStyle: "preserve-3d",
-                  transformOrigin: "center bottom",
-                }}
+                className="block rounded-xl overflow-visible group relative"
+                style={{ perspective: "600px" }}
+                whileHover="hover"
+                initial="initial"
               >
-                <span
-                  className={`transition-colors duration-300 ${item.iconColor}`}
+                <motion.div
+                  className="absolute inset-0 z-0 pointer-events-none"
+                  variants={glowVariants}
+                  style={{
+                    background: item.gradient,
+                    opacity: activeTool === item.value ? 1 : 0,
+                    borderRadius: "16px",
+                  }}
+                />
+                <motion.button
+                  onClick={() => handleSelectTool(item.value)}
+                  className={`flex items-center gap-2 px-4 py-2 relative z-10 bg-transparent transition-colors rounded-xl ${
+                    activeTool === item.value
+                      ? "text-foreground font-bold"
+                      : "text-muted-foreground"
+                  }`}
+                  variants={itemVariants}
+                  transition={sharedTransition}
                 >
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-              </motion.button>
-              <motion.button
-                onClick={() => handleSelectTool(item.value)}
-                className="flex items-center gap-2 px-4 py-2 absolute inset-0 z-10 bg-transparent transition-colors rounded-xl"
-                variants={backVariants}
-                transition={sharedTransition}
-                style={{
-                  transformStyle: "preserve-3d",
-                  transformOrigin: "center top",
-                  rotateX: 90,
-                }}
-              >
-                <span
-                  className={`transition-colors duration-300 ${item.iconColor}`}
+                  <span
+                    className={`transition-colors duration-300 ${item.iconColor}`}
+                  >
+                    {item.icon}
+                  </span>
+                  <span>{item.label}</span>
+                </motion.button>
+                <motion.button
+                  onClick={() => handleSelectTool(item.value)}
+                  className="absolute inset-0 flex items-center gap-2 px-4 py-2 bg-transparent transition-colors rounded-xl"
+                  variants={backVariants}
+                  transition={sharedTransition}
+                  style={{
+                    transformStyle: "preserve-3d",
+                    transformOrigin: "center top",
+                  }}
                 >
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-              </motion.button>
-            </motion.div>
-          </motion.li>
-        ))}
-      </ul>
-    </motion.nav>
+                  <span
+                    className={`transition-colors duration-300 ${item.iconColor}`}
+                  >
+                    {item.icon}
+                  </span>
+                  <span>{item.label}</span>
+                </motion.button>
+              </motion.div>
+            </motion.li>
+          ))}
+        </ul>
+      </motion.nav>
+    </div>
   );
 }
