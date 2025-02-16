@@ -1,6 +1,7 @@
 "use client";
 
 import type * as React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Fingerprint,
@@ -15,7 +16,7 @@ import { useTheme } from "next-themes";
 interface MenuItem {
   icon: React.ReactNode;
   label: string;
-  href: string;
+  value: string;
   gradient: string;
   iconColor: string;
 }
@@ -24,24 +25,23 @@ const menuItems: MenuItem[] = [
   {
     icon: <Fingerprint className="h-5 w-5" />,
     label: "ID Generator",
-    href: "#",
+    value: "id-generator",
     gradient:
-      "radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
+      "radial-gradient(circle, rgba(15,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
     iconColor: "text-blue-500",
   },
   {
     icon: <Scaling className="h-5 w-5" />,
     label: "Aspect Ratio",
-    href: "#",
+    value: "aspect-ratio",
     gradient:
       "radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)",
     iconColor: "text-orange-500",
   },
   {
-    // eslint-disable-next-line jsx-a11y/alt-text
     icon: <Image className="h-5 w-5" />,
     label: "Image Modifier",
-    href: "#",
+    value: "image-modifier",
     gradient:
       "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
     iconColor: "text-green-500",
@@ -49,7 +49,7 @@ const menuItems: MenuItem[] = [
   {
     icon: <List className="h-5 w-5" />,
     label: "List Ordering",
-    href: "#",
+    value: "list-ordering",
     gradient:
       "radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)",
     iconColor: "text-red-500",
@@ -57,7 +57,7 @@ const menuItems: MenuItem[] = [
   {
     icon: <Quote className="h-5 w-5" />,
     label: "Delimiter",
-    href: "#",
+    value: "delimiter",
     gradient:
       "radial-gradient(circle, rgba(220,200,10,0.15) 0%, rgba(220,200,10,0.06) 50%, rgba(185,28,28,0) 100%)",
     iconColor: "text-yellow-500",
@@ -65,10 +65,10 @@ const menuItems: MenuItem[] = [
   {
     icon: <Pilcrow className="h-5 w-5" />,
     label: "Lorem Ipsum",
-    href: "#",
+    value: "lorem-ipsum",
     gradient:
-      "radial-gradient(circle, rgba(220,200,10,0.15) 0%, rgba(220,200,10,0.06) 50%, rgba(185,28,28,0) 100%)",
-    iconColor: "text-yellow-500",
+      "radial-gradient(circle, rgba(249,125,189,0.15) 0%, rgba(249,125,189,0.06) 50%, rgba(185,28,28,0) 100%)",
+    iconColor: "text-pink-500",
   },
 ];
 
@@ -114,6 +114,14 @@ const sharedTransition = {
 
 export function MenuBar() {
   const { theme } = useTheme();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handleSelectTool = (tool: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("tool", tool);
+    router.push(`/?${params.toString()}`);
+  };
 
   const isDarkTheme = theme === "dark";
 
@@ -149,8 +157,8 @@ export function MenuBar() {
                   borderRadius: "16px",
                 }}
               />
-              <motion.a
-                href={item.href}
+              <motion.button
+                onClick={() => handleSelectTool(item.value)}
                 className="flex items-center gap-2 px-4 py-2 relative z-10 bg-transparent text-muted-foreground group-hover:text-foreground transition-colors rounded-xl"
                 variants={itemVariants}
                 transition={sharedTransition}
@@ -160,14 +168,14 @@ export function MenuBar() {
                 }}
               >
                 <span
-                  className={`transition-colors duration-300 group-hover:${item.iconColor} text-foreground`}
+                  className={`transition-colors duration-300 ${item.iconColor} text-foreground`}
                 >
                   {item.icon}
                 </span>
                 <span>{item.label}</span>
-              </motion.a>
-              <motion.a
-                href={item.href}
+              </motion.button>
+              <motion.button
+                onClick={() => handleSelectTool(item.value)}
                 className="flex items-center gap-2 px-4 py-2 absolute inset-0 z-10 bg-transparent text-muted-foreground group-hover:text-foreground transition-colors rounded-xl"
                 variants={backVariants}
                 transition={sharedTransition}
@@ -178,12 +186,12 @@ export function MenuBar() {
                 }}
               >
                 <span
-                  className={`transition-colors duration-300 group-hover:${item.iconColor} text-foreground`}
+                  className={`transition-colors duration-300 ${item.iconColor} text-foreground`}
                 >
                   {item.icon}
                 </span>
                 <span>{item.label}</span>
-              </motion.a>
+              </motion.button>
             </motion.div>
           </motion.li>
         ))}

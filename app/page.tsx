@@ -1,5 +1,6 @@
 import { MenuBar } from "./components/menu-bar";
 import { ThemeToggle } from "./components/theme-toggle";
+import ToolLoader from "./ToolLoader";
 
 export default function Home() {
   return (
@@ -7,14 +8,25 @@ export default function Home() {
       <header className="row-start-1 flex flex-col gap-4 items-center">
         <MenuBar />
       </header>
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <p>Coming Soon</p>
+      <main className="flex flex-col gap-8 row-start-2 items-center justify-center w-full min-h-[60vh]">
+        <div className="w-full flex justify-center">
+          <ToolLoader />
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
+      <footer className="row-start-3 flex flex-col gap-5 items-center justify-center">
         <ThemeToggle />
-        <p>A Wright Media House vision</p>
+        <p>
+          A{" "}
+          <a
+            href="https://wmh.gg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            Wright Media House
+          </a>{" "}
+          vision
+        </p>
       </footer>
     </div>
   );
