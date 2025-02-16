@@ -22,8 +22,10 @@ import { ClipboardCopy, RefreshCw } from "lucide-react";
 import { nanoid } from "nanoid";
 import { v4 as uuidv4 } from "uuid";
 import { createId as cuid } from "@paralleldrive/cuid2";
+import { useToast } from "@/hooks/use-toast";
 
 export default function IdGenerator() {
+  const { toast } = useToast();
   const [idType, setIdType] = useState<"cuid" | "uuid" | "nanoid">("cuid");
   const [quantity, setQuantity] = useState(1);
   const [generatedIds, setGeneratedIds] = useState<string[]>([]);
@@ -41,6 +43,11 @@ export default function IdGenerator() {
   const copyToClipboard = () => {
     if (generatedIds.length === 0) return;
     navigator.clipboard.writeText(generatedIds.join("\n"));
+
+    toast({
+      title: "Copied to Clipboard",
+      description: `${generatedIds.length} ${idType}(s) copied successfully!`,
+    });
   };
 
   return (

@@ -1,7 +1,6 @@
 "use client";
 
-import type * as React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Fingerprint,
@@ -112,18 +111,19 @@ const sharedTransition = {
   duration: 0.5,
 };
 
-export function MenuBar() {
+export function MenuBar({
+  setSelectedTool,
+}: {
+  setSelectedTool: (tool: string) => void;
+}) {
   const { theme } = useTheme();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const [activeTool, setActiveTool] = useState<string | null>(null);
+  const isDarkTheme = theme === "dark";
 
   const handleSelectTool = (tool: string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("tool", tool);
-    router.push(`/?${params.toString()}`);
+    setActiveTool(tool);
+    setSelectedTool(tool);
   };
-
-  const isDarkTheme = theme === "dark";
 
   return (
     <motion.nav
@@ -153,13 +153,17 @@ export function MenuBar() {
                 variants={glowVariants}
                 style={{
                   background: item.gradient,
-                  opacity: 0,
+                  opacity: activeTool === item.value ? 1 : 0,
                   borderRadius: "16px",
                 }}
               />
               <motion.button
                 onClick={() => handleSelectTool(item.value)}
-                className="flex items-center gap-2 px-4 py-2 relative z-10 bg-transparent text-muted-foreground group-hover:text-foreground transition-colors rounded-xl"
+                className={`flex items-center gap-2 px-4 py-2 relative z-10 bg-transparent transition-colors rounded-xl ${
+                  activeTool === item.value
+                    ? "text-foreground font-bold"
+                    : "text-muted-foreground"
+                }`}
                 variants={itemVariants}
                 transition={sharedTransition}
                 style={{
@@ -168,7 +172,7 @@ export function MenuBar() {
                 }}
               >
                 <span
-                  className={`transition-colors duration-300 ${item.iconColor} text-foreground`}
+                  className={`transition-colors duration-300 ${item.iconColor}`}
                 >
                   {item.icon}
                 </span>
@@ -176,7 +180,7 @@ export function MenuBar() {
               </motion.button>
               <motion.button
                 onClick={() => handleSelectTool(item.value)}
-                className="flex items-center gap-2 px-4 py-2 absolute inset-0 z-10 bg-transparent text-muted-foreground group-hover:text-foreground transition-colors rounded-xl"
+                className="flex items-center gap-2 px-4 py-2 absolute inset-0 z-10 bg-transparent transition-colors rounded-xl"
                 variants={backVariants}
                 transition={sharedTransition}
                 style={{
@@ -186,7 +190,7 @@ export function MenuBar() {
                 }}
               >
                 <span
-                  className={`transition-colors duration-300 ${item.iconColor} text-foreground`}
+                  className={`transition-colors duration-300 ${item.iconColor}`}
                 >
                   {item.icon}
                 </span>
