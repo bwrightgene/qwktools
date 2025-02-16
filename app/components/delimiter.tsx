@@ -12,7 +12,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ClipboardCopy, RefreshCw, Split } from "lucide-react";
+import { ClipboardCopy, RefreshCw, Split, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ListDelimiter() {
@@ -23,15 +23,23 @@ export default function ListDelimiter() {
   const [outputOnePerLine, setOutputOnePerLine] = useState(true);
   const [formattedList, setFormattedList] = useState<string>("");
 
+  const escapeRegex = (str: string) =>
+    str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
   const processList = () => {
     let items = inputList.split("\n").filter((item) => item.trim() !== "");
 
-    if (removeDelimiter) {
-      items = items.map((item) => item.split(delimiter).join(""));
+    if (removeDelimiter && delimiter) {
+      const regex = new RegExp(escapeRegex(delimiter), "g");
+      items = items.map((item) => item.replace(regex, "").trim());
     }
 
     const output = outputOnePerLine
-      ? items.join(delimiter + "\n")
+      ? items
+          .map(
+            (item) => item + (delimiter && !removeDelimiter ? delimiter : "")
+          )
+          .join("\n")
       : items.join(delimiter);
 
     setFormattedList(output);
@@ -40,13 +48,29 @@ export default function ListDelimiter() {
   const separateList = () => {
     if (!delimiter) return;
 
+    const regex = new RegExp(escapeRegex(delimiter), "g");
+
     const separated = inputList
-      .split(delimiter)
+      .split(regex)
       .map((item) => item.trim())
       .filter((item) => item !== "")
       .join("\n");
 
     setInputList(separated);
+  };
+
+  const removeDuplicates = () => {
+    const uniqueItems = Array.from(
+      new Set(inputList.split("\n").map((item) => item.trim()))
+    )
+      .filter((item) => item !== "")
+      .join("\n");
+
+    setInputList(uniqueItems);
+    toast({
+      title: "Duplicates Removed",
+      description: "All duplicate items have been removed.",
+    });
   };
 
   const copyToClipboard = () => {
@@ -111,24 +135,31 @@ export default function ListDelimiter() {
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            onClick={processList}
-            className="w-full flex items-center gap-2"
-          >
-            <RefreshCw size={16} />
-            Process List
-          </Button>
+        <div className="grid grid-cols-2 gap-2">
           <Button
             onClick={separateList}
-            className="w-full flex items-center gap-2"
+            className="flex items-center gap-2 justify-center"
           >
             <Split size={16} />
             Separate List
           </Button>
           <Button
+            onClick={removeDuplicates}
+            className="flex items-center gap-2 justify-center"
+          >
+            <Trash2 size={16} />
+            Remove Duplicates
+          </Button>
+          <Button
+            onClick={processList}
+            className="flex items-center gap-2 justify-center"
+          >
+            <RefreshCw size={16} />
+            Process List
+          </Button>
+          <Button
             onClick={copyToClipboard}
-            className="w-full flex items-center gap-2"
+            className="flex items-center gap-2 justify-center"
             disabled={!formattedList}
           >
             <ClipboardCopy size={16} />
